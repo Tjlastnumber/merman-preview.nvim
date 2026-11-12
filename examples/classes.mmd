@@ -1,0 +1,24 @@
+classDiagram
+    direction LR
+    class SourceSnapshot {
+        +String 来源编号
+        +importData() void
+    }
+    class ProductionService {
+        <<service>>
+        -Repository~DailyProduction~ repository
+        +produce() DailyProduction
+    }
+    class DailyProduction {
+        +String 井号
+        +Decimal 产量
+        +snapshot() ProductionSnapshot
+    }
+    class Repository~T~ {
+        <<interface>>
+        +save(T value) void
+        +findById(String id) T
+    }
+    SourceSnapshot --> ProductionService : 显式导入
+    ProductionService ..> Repository : 依赖
+    ProductionService "1" *-- "*" DailyProduction : 生产

@@ -1,0 +1,12 @@
+flowchart LR
+    IAM["Sys / IPCP<br/>上游身份与授权"] --> ACL["security-client<br/>防腐层"]
+    ACL --> DEMO
+    subgraph DEMO["Demo 限界上下文 · 独立进程 / geo_demo"]
+        S["采集子域<br/>SourceSnapshot"] -->|用户显式导入| P["生产子域<br/>Well / DailyProduction / DailyPrice"]
+        P -->|不可变产量快照| T["批次与估值子域<br/>TransferBatch / Valuation"]
+        P --> R["报表读模型<br/>TrendPoint / MonthlyStatistics"]
+        T --> O["事务发件箱"]
+        O --> K[Kafka]
+        K -->|可信原文校验 + 幂等回执| T
+        K -->|仅更新采集快照| S
+    end

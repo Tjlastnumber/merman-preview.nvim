@@ -1,0 +1,45 @@
+vim.opt.rtp:append(vim.fn.getcwd())
+require('merman_preview').setup({max_width=100})
+vim.o.columns = 120
+vim.o.lines = 50
+local src = vim.fn.readfile('examples/demo.mmd')
+local original = vim.deepcopy(src)
+table.insert(src,1,'```mermaid')
+src[#src+1] = '```'
+local original_buf = vim.api.nvim_get_current_buf()
+vim.api.nvim_buf_set_lines(0,0,-1,false,src)
+vim.bo.filetype='markdown'
+vim.api.nvim_win_set_cursor(0,{4,0})
+local function wait_preview()
+ assert(vim.wait(5000,function() return vim.bo.filetype=='mermanpreview' end,10),'preview timed out')
+ local lines=vim.api.nvim_buf_get_lines(0,0,-1,false)
+ local text=table.concat(lines,'\n')
+ assert(text:find('SourceSnapshot',1,true))
+ assert(not text:find('<br',1,true))
+ assert(not vim.wo.wrap and not vim.bo.modifiable)
+ local ns=vim.api.nvim_get_namespaces().merman_preview
+ assert(#vim.api.nvim_buf_get_extmarks(0,ns,0,-1,{})>0)
+ return vim.api.nvim_get_current_win()
+end
+vim.cmd('MermanPreview')
+local float=wait_preview()
+assert(vim.api.nvim_win_get_config(float).relative=='editor')
+require('merman_preview').close()
+assert(vim.api.nvim_get_current_buf()==original_buf)
+vim.cmd('MermanSplit')
+local split=wait_preview()
+assert(vim.api.nvim_win_get_config(split).relative=='')
+require('merman_preview').close()
+assert(vim.api.nvim_get_current_buf()==original_buf)
+assert(vim.deep_equal(vim.api.nvim_buf_get_lines(original_buf,1,-2,false),original))
+-- Explicit ranges and standalone .mmd files also work.
+vim.cmd('2,13MermanPreview')
+wait_preview()
+require('merman_preview').close()
+vim.api.nvim_buf_set_lines(0,0,-1,false,original)
+vim.bo.filetype='mermaid'
+vim.cmd('MermanPreview')
+wait_preview()
+require('merman_preview').close()
+print('PASS: Neovim float, split, highlighting, source unchanged, selected range, standalone Mermaid')
+vim.cmd('qa!')
