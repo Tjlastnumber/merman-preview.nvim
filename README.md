@@ -1,5 +1,7 @@
 # 在 Neovim 中使用 OpenCode 的 Mermaid 排版引擎
 
+[English](README.en.md) | 简体中文
+
 这个本地试用插件复用 OpenCode 的 merman 解析、布局和字符网格代码，另有新增的 classDiagram 适配层。默认按编辑模式切换源码和图表，也保留浮窗和分屏预览。iTerm2 只需显示 Unicode 文字，不需要图片协议。
 
 本次已用你提供的完整图表验证。120 列目标宽度下的布局与第一张截图基本一致；80、100 列下会采用不同布局。更换窗口宽度、字体或 OpenCode 引擎版本后，结果可能变化。
