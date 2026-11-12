@@ -113,6 +113,8 @@ https://github.com/anomalyco/opencode/tree/d7ae4f2e3ccdbdbb1a7cb6be660713aae44a6
 
 包含 flowchart、classDiagram、sequenceDiagram、stateDiagram-v2、gantt、gitGraph、timeline 的引擎入口；其他图类型会提示不支持。
 
+时序图支持 `rect rgb(...)` / `rect rgba(...)` 区域及嵌套。在字符预览中以标有 `rect` 的边框表示区域，不复现 RGB 背景填色。完整示例见 [`examples/batch-transfer.mmd`](examples/batch-transfer.mmd)。Markdown 代码块应标记为 `mermaid`，图表源码第一行需为 `sequenceDiagram`。
+
 0.3.0 新增 classDiagram。类图支持名称/属性/方法分栏、可见性标记、类注解、泛型、中文标签、命名空间，以及继承、组合、聚合、关联、依赖、实现和普通连线。双向关系也保留两端的 UML 标记。
 
 类图的解析与分栏是本插件新增代码，布局和路由仍使用 merman。基数与关系标签合并显示在连线中间，例如 `1 / 生产 / *`；暂未实现 note 和 lollipop 接口语法，classDef/style/click 语句不改变预览样式。
@@ -148,6 +150,8 @@ npm run build
 nvim --headless -u NONE -i NONE -l tests/test-inline.lua
 nvim --headless -u NONE -i NONE -l tests/test-nvim.lua
 node tests/test-class.mjs
+node tests/test-sequence.mjs
+nvim --headless -u NONE -i NONE -l tests/test-sequence-nvim.lua
 nvim --headless -u NONE -i NONE -l tests/test-class-nvim.lua
 nvim --headless -u NONE -i NONE -l tests/test-hybrid.lua
 ```

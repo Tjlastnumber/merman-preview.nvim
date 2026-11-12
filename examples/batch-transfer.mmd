@@ -1,0 +1,24 @@
+sequenceDiagram
+    participant U as 用户
+    participant A as 应用服务
+    participant D as 领域模型
+    participant DB as 数据库
+    participant K as Kafka Worker
+    participant B as Kafka Broker
+    U->>A: 发送批次（可信身份）
+    A->>D: 校验日期 / 缺报 / 幂等 / 归属
+    rect rgb(235,245,255)
+      A->>DB: REPEATABLE_READ：保存批次 + 发件箱
+    end
+    K->>DB: 读取待发送事件
+    K->>B: 发布持久化事件
+    B-->>K: Broker ACK
+    K->>DB: 标记 PUBLISHED
+    B-->>K: 投递待消费记录
+    K->>A: 消费 TRANSFER v1
+    A->>DB: 原文匹配 + 幂等回执（同事务）
+    A-->>K: 提交成功
+    K->>B: 提交 offset
+    U->>A: 计算产值
+    A->>D: 归属 + RECEIVED / LEGACY + 首次结果
+    A->>DB: 保存首次估值

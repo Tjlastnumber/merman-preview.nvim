@@ -118,6 +118,8 @@ Standalone `.mmd` files can be previewed directly. You can also select diagram s
 
 The renderer includes entry points for `flowchart`, `classDiagram`, `sequenceDiagram`, `stateDiagram-v2`, `gantt`, `gitGraph`, and `timeline`. Other diagram types report an unsupported-type error.
 
+Sequence diagrams support nested `rect rgb(...)` / `rect rgba(...)` regions. Character previews show a frame labeled `rect` instead of reproducing RGB background fills. See [examples/batch-transfer.mmd](examples/batch-transfer.mmd) for a complete example. Use a `mermaid` Markdown fence and start the diagram source with `sequenceDiagram`.
+
 Class diagrams support separate name, attribute, and method sections; visibility markers; class annotations; generics; Chinese labels; namespaces; and inheritance, composition, aggregation, association, dependency, realization, and plain links. Bidirectional relations preserve UML markers at both ends.
 
 The class parser and compartment rendering are additions in this plugin; layout and routing still use merman. Cardinalities and relation labels appear together in the middle of a link, for example `1 / produces / *`. Class diagram notes and lollipop interfaces are not implemented. `classDef`, `style`, and `click` statements do not change the preview's appearance. See [examples/classes.mmd](examples/classes.mmd) for a class diagram example.
@@ -151,6 +153,8 @@ Run the following from the plugin directory. These checks use the bundled render
 nvim --headless -u NONE -i NONE -l tests/test-inline.lua
 nvim --headless -u NONE -i NONE -l tests/test-nvim.lua
 node tests/test-class.mjs
+node tests/test-sequence.mjs
+nvim --headless -u NONE -i NONE -l tests/test-sequence-nvim.lua
 nvim --headless -u NONE -i NONE -l tests/test-class-nvim.lua
 nvim --headless -u NONE -i NONE -l tests/test-hybrid.lua
 ```

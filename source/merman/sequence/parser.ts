@@ -21,6 +21,7 @@ const BOX_RE = /^box(?:\s+(.+))?$/i
 const ALT_RE = /^alt\s+(.+)$/i
 const ELSE_RE = /^else(?:\s+(.+))?$/i
 const LOOP_RE = /^loop\s+(.+)$/i
+const RECT_RE = /^rect\s+rgba?\([^)]+\)$/i
 const AUTONUMBER_RE = /^autonumber(?:\s+(\d+)(?:\s+(\d+))?)?$/i
 const UNSUPPORTED_BIDIRECTIONAL_MESSAGE_RE = /<<-{1,2}>>/
 const MESSAGE_OPERATOR_RE = /-->>|->>|--x|-x|--\)|-\)|-->|->/
@@ -126,7 +127,7 @@ export function parseMermaidSequenceDiagram(content: string): SequenceDiagram {
   const messages: SequenceMessage[] = []
   const steps: SequenceStep[] = []
   const groups: SequenceParticipantGroup[] = []
-  const blockStack: Array<{ kind: "box" | "alt" | "loop"; lineNumber: number; sourceLine: string }> = []
+  const blockStack: Array<{ kind: "box" | "alt" | "loop" | "rect"; lineNumber: number; sourceLine: string }> = []
   const groupStack: SequenceParticipantGroup[] = []
   let nextMessageNumber: number | undefined
   let messageNumberIncrement = 1
@@ -203,6 +204,13 @@ export function parseMermaidSequenceDiagram(content: string): SequenceDiagram {
     if (loopMatch) {
       blockStack.push({ kind: "loop", lineNumber: source.lineNumber, sourceLine: line })
       steps.push({ type: "fragment", fragment: { kind: "loop", label: stripQuotes(loopMatch[1]!) } })
+      continue
+    }
+
+    if (RECT_RE.test(line)) {
+      blockStack.push({ kind: "rect", lineNumber: source.lineNumber, sourceLine: line })
+      // Character previews represent background regions as frames, without RGB fills.
+      steps.push({ type: "fragment", fragment: { kind: "rect", label: "" } })
       continue
     }
 

@@ -139,13 +139,13 @@ function renderFragment(
   const { leftX, rightX } = bounds
 
   const leftChar =
-    fragment.kind === "alt" || fragment.kind === "loop"
+    fragment.kind === "alt" || fragment.kind === "loop" || fragment.kind === "rect"
       ? border.topLeft
       : fragment.kind === "else"
         ? border.leftT
         : border.bottomLeft
   const rightChar =
-    fragment.kind === "alt" || fragment.kind === "loop"
+    fragment.kind === "alt" || fragment.kind === "loop" || fragment.kind === "rect"
       ? border.topRight
       : fragment.kind === "else"
         ? border.rightT
